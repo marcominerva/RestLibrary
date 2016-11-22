@@ -1,2 +1,2 @@
 # RestLibrary
-A lightweight library to perform common REST api calls
+A lightweight library to perform common REST api calls.
