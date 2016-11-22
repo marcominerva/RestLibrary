@@ -240,3 +240,4 @@ _Pvt_Extensions
 *.db
 *.vsext
 /Silversea.ShipLocator/Silversea.ShipLocator.WebApi/App_Data/AllWorld.mbtiles
+/nuget/nuget.exe
