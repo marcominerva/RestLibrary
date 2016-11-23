@@ -4,6 +4,12 @@ More often than not, when we need to talk to some kind of REST Endpoints, we end
 
 **RestLibrary** aims to greatly simplify all these tasks: it is a lightweight library to perform common REST API calls. It is NOT intended to be a universal REST client that fits every needs. It has been developed to address requests that tipically we have to manage, in particular when we're using ASP .NET Web API as backend.
 
+**Installation**
+
+The library is available on [NuGet](https://www.nuget.org/packages/RestLibrary/). Just search *RestLibrary* in the **Package Manager GUI** or run the following command in the **Package Manager Console**:
+
+    Install-Package RestLibrary
+
 **Contribute**
 
 The project is continually evolving. We welcome contributions. Feel free to file issues and pull requests on the repo and we'll address them as we can.
