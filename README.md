@@ -9,6 +9,36 @@ More often than not, when we need to talk to some kind of REST Endpoints, we end
 The library is available on [NuGet](https://www.nuget.org/packages/RestLibrary/). Just search *RestLibrary* in the **Package Manager GUI** or run the following command in the **Package Manager Console**:
 
     Install-Package RestLibrary
+    
+**Usage**
+
+    var client = new RestClient("http://localhost:27243/");
+    var isLoggedIn = await client.OAuthLoginAsync("demo@demo.com", "password");
+            
+    var productListResponse = await client.GetAsync<IEnumerable<Product>>("api/products");
+    if (productListResponse.IsSuccessful)
+    {   
+        foreach (var product in productListResponse.Content) 
+        {      
+            PrintProductInformation(product);  
+        }
+    }
+    
+    var productResponse = await client.GetAsync<Product>("api/products/96");
+    if (productResponse.IsSuccessful)
+    {    
+        PrintProductInformation(productResponse.Content);
+    }
+    else if (productResponse.StatusCode == HttpStatusCode.NotFound)
+    {
+        Debug.WriteLine("Product not found.");
+    }
+    
+    var newProduct = new Product { Name = "Mouse Bluetooth", Price = 25 };
+    var newProductResponse = await client.PostWithResultAsync<Product, Product>("api/products", newProduct);
+    Debug.WriteLine($"The ID of the new product is {newProductResponse.Content.Id}");
+
+Other samples are available in the [Samples](https://github.com/marcominerva/RestLibrary/tree/master/Samples) folder.
 
 **Contribute**
 
