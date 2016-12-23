@@ -17,7 +17,8 @@ namespace RestLibrary
 {
     public class RestClient : IRestClient
     {
-        internal static string JsonMimeType = "application/json";
+        internal const string JsonMimeType = "application/json";
+        internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
         private readonly HttpClient client;
         private Credentials credentials;
@@ -41,6 +42,8 @@ namespace RestLibrary
             get { return baseAddress; }
             set
             {
+                value = !string.IsNullOrWhiteSpace(value) ? value : null;
+
                 if (baseAddress != value)
                 {
                     baseAddress = value;
@@ -65,11 +68,15 @@ namespace RestLibrary
             get { return language; }
             set
             {
+                value = !string.IsNullOrWhiteSpace(value) ? value : null;
+
                 if (language != value)
                 {
                     language = value;
                     client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
+
+                    if (language != null)
+                        client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
                 }
             }
         }
@@ -192,7 +199,7 @@ namespace RestLibrary
         public async Task<bool> OAuthLoginAsync(string userName, string password, string path = "token")
         {
             var body = $"grant_type=password&username={userName}&password={password}";
-            var data = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
+            var data = new StringContent(body, Encoding.UTF8, FormUrlEncoded);
             var response = await client.PostAsync(path, data).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
