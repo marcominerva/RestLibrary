@@ -20,8 +20,7 @@ namespace RestLibrary
         internal const string JsonMimeType = "application/json";
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
-        private readonly HttpClient client;
-        private Credentials credentials;
+        private readonly HttpClient client;        
 
         public RestClient(string serviceUrl = null, string language = null)
         {
@@ -98,6 +97,8 @@ namespace RestLibrary
             }
         }
 
+        public Credentials Credentials { get; set; }
+
         public HttpRequestHeaders Headers => client.DefaultRequestHeaders;
 
         public TimeSpan Timeout
@@ -166,9 +167,9 @@ namespace RestLibrary
             resource = this.NormalizeUrl(resource);
             var response = await action(resource, obj).ConfigureAwait(false);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized && credentials != null)
+            if (response.StatusCode == HttpStatusCode.Unauthorized && Credentials != null)
             {
-                await this.OAuthLoginAsync(credentials.UserName, credentials.Password);
+                await this.OAuthLoginAsync(Credentials.UserName, Credentials.Password);
                 response = await action.Invoke(resource, obj).ConfigureAwait(false);
             }
 
@@ -212,7 +213,7 @@ namespace RestLibrary
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             AccessToken = JToken.Parse(content)["access_token"].ToString();
-            credentials = new Credentials { UserName = userName, Password = password };
+            Credentials = new Credentials(userName, password);
 
             return true;
         }
@@ -220,9 +221,9 @@ namespace RestLibrary
         public Task LogoutAsync()
         {
             AccessToken = null;
-            credentials = null;
+            Credentials = null;
 
-            return Task.FromResult(true);
+            return Task.FromResult<object>(null);
         }
 
         public void Dispose()

@@ -13,8 +13,8 @@ namespace SampleWebApi.Controllers
     {
         private static List<Product> products = new List<Product>
             {
-                new Product { Id = 1, Name = "Monitor 24''", Description = "Full HD, HDMI & VGA", Price=139 },
-                new Product { Id = 2, Name = "Modem Router", Description = "4 Gigabit ports", Price=46 },
+                new Product { Id = 1, Name = "Monitor 24''", Description = "Full HD, HDMI & VGA", Price = 139 },
+                new Product { Id = 2, Name = "Modem Router", Description = "4 Gigabit ports", Price = 46 },
                 new Product { Id = 3, Name = "Wireless keyboard", Price = 18 }
             };
 

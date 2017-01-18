@@ -14,6 +14,8 @@ namespace RestLibrary
 
         string AccessToken { get; set; }
 
+        Credentials Credentials { get; set; }
+
         HttpRequestHeaders Headers { get; }
 
         TimeSpan Timeout { get; set; }

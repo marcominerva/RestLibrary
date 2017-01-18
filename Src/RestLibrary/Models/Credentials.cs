@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace RestLibrary.Models
 {
-    internal class Credentials
+    public class Credentials
     {
-        public string UserName { get; set; }
+        public string UserName { get; }
 
-        public string Password { get; set; }
+        public string Password { get; }
+
+        public Credentials(string userName, string password)
+        {
+            UserName = userName;
+            Password = password;
+        }
     }
 }
