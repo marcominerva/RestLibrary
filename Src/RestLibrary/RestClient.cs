@@ -20,9 +20,14 @@ namespace RestLibrary
         internal const string JsonMimeType = "application/json";
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
-        private readonly HttpClient client;        
+        private readonly HttpClient client;
 
-        public RestClient(string serviceUrl = null, string language = null)
+        public RestClient()
+            : this(null, null)
+        {
+        }
+
+        public RestClient(string baseAddress, string language = null)
         {
             var handler = new HttpClientHandler { AllowAutoRedirect = true };
             if (handler.SupportsAutomaticDecompression)
@@ -31,8 +36,8 @@ namespace RestLibrary
             client = new HttpClient(handler);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(JsonMimeType));
 
+            BaseAddress = baseAddress;
             Language = language;
-            BaseAddress = serviceUrl;
         }
 
         private string baseAddress;
@@ -72,7 +77,7 @@ namespace RestLibrary
                 if (language != value)
                 {
                     language = value;
-                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.AcceptLanguage.Clear();
 
                     if (language != null)
                         client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
@@ -123,7 +128,9 @@ namespace RestLibrary
         public async Task<RestResponse> PostAsync<T>(string resource, T content)
         {
             using (var response = await this.InvokeResourceAsync((arg, obj) => client.PostAsJsonAsync(arg, obj), resource, content))
+            {
                 return new RestResponse(response);
+            }
         }
 
         public Task<RestResponse<T>> PostWithResultAsync<T>(string resource) => this.PostWithResultAsync<object, T>(resource, null);
@@ -142,7 +149,9 @@ namespace RestLibrary
         public async Task<RestResponse> PutAsync<T>(string resource, T content)
         {
             using (var response = await this.InvokeResourceAsync((arg, obj) => client.PutAsJsonAsync(arg, obj), resource, content))
+            {
                 return new RestResponse(response);
+            }
         }
 
         public Task<RestResponse<T>> PutWithResultAsync<T>(string resource) => this.PutWithResultAsync<object, T>(resource, null);
@@ -159,12 +168,14 @@ namespace RestLibrary
         public async Task<RestResponse> DeleteAsync(string resource)
         {
             using (var response = await this.InvokeResourceAsync<object>((arg, obj) => client.DeleteAsync(arg), resource, null))
+            {
                 return new RestResponse(response);
+            }
         }
 
         private async Task<HttpResponseMessage> InvokeResourceAsync<T>(Func<string, T, Task<HttpResponseMessage>> action, string resource, T obj)
         {
-            resource = this.NormalizeUrl(resource);
+            resource = resource?.TrimStart('/');
             var response = await action(resource, obj).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized && Credentials != null)
@@ -231,7 +242,5 @@ namespace RestLibrary
             client.Dispose();
             GC.SuppressFinalize(this);
         }
-
-        private string NormalizeUrl(string url) => url?.TrimStart('/');
     }
 }
