@@ -1,6 +1,7 @@
 using RestLibrary.Models;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -19,6 +20,8 @@ namespace RestLibrary
         HttpRequestHeaders Headers { get; }
 
         TimeSpan Timeout { get; set; }
+
+        HttpClient HttpClient { get; }
 
         Task<RestResponse<string>> GetAsync(string resource);
 
