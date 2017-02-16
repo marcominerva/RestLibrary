@@ -112,64 +112,67 @@ namespace RestLibrary
             set { HttpClient.Timeout = value; }
         }
 
-        public Task<RestResponse<string>> GetAsync(string resource) => this.GetAsync<string>(resource);
+        public Task<RestResponse<string>> GetAsync(string resource) => GetAsync<string>(resource);
 
         public async Task<RestResponse<T>> GetAsync<T>(string resource)
         {
-            using (var response = await this.InvokeResourceAsync<object>((arg, obj) => HttpClient.GetAsync(arg), resource, null))
+            using (var response = await InvokeResourceAsync<object>((arg, obj) => HttpClient.GetAsync(arg), resource, null))
             {
-                var result = await this.DeserializeAsync<T>(response);
+                var result = await GetContentAsync(response);
                 return new RestResponse<T>(response, result);
             }
         }
 
-        public Task<RestResponse> PostAsync(string resource) => this.PostAsync<object>(resource, null);
+        public Task<RestResponse> PostAsync(string resource) => PostAsync<object>(resource, null);
 
         public async Task<RestResponse> PostAsync<T>(string resource, T content)
         {
-            using (var response = await this.InvokeResourceAsync((arg, obj) => HttpClient.PostAsJsonAsync(arg, obj), resource, content))
+            using (var response = await InvokeResourceAsync((arg, obj) => HttpClient.PostAsJsonAsync(arg, obj), resource, content))
             {
-                return new RestResponse(response);
+                var result = await GetContentAsync(response);
+                return new RestResponse(response, result);
             }
         }
 
-        public Task<RestResponse<T>> PostWithResultAsync<T>(string resource) => this.PostWithResultAsync<object, T>(resource, null);
+        public Task<RestResponse<T>> PostWithResultAsync<T>(string resource) => PostWithResultAsync<object, T>(resource, null);
 
         public async Task<RestResponse<U>> PostWithResultAsync<T, U>(string resource, T content)
         {
-            using (var response = await this.InvokeResourceAsync((arg, obj) => HttpClient.PostAsJsonAsync(arg, obj), resource, content))
+            using (var response = await InvokeResourceAsync((arg, obj) => HttpClient.PostAsJsonAsync(arg, obj), resource, content))
             {
-                var result = await this.DeserializeAsync<U>(response);
+                var result = await GetContentAsync(response);
                 return new RestResponse<U>(response, result);
             }
         }
 
-        public Task<RestResponse> PutAsync(string resource) => this.PutAsync<object>(resource, null);
+        public Task<RestResponse> PutAsync(string resource) => PutAsync<object>(resource, null);
 
         public async Task<RestResponse> PutAsync<T>(string resource, T content)
         {
-            using (var response = await this.InvokeResourceAsync((arg, obj) => HttpClient.PutAsJsonAsync(arg, obj), resource, content))
+            using (var response = await InvokeResourceAsync((arg, obj) => HttpClient.PutAsJsonAsync(arg, obj), resource, content))
             {
-                return new RestResponse(response);
+                var result = await GetContentAsync(response);
+                return new RestResponse(response, result);
             }
         }
 
-        public Task<RestResponse<T>> PutWithResultAsync<T>(string resource) => this.PutWithResultAsync<object, T>(resource, null);
+        public Task<RestResponse<T>> PutWithResultAsync<T>(string resource) => PutWithResultAsync<object, T>(resource, null);
 
         public async Task<RestResponse<U>> PutWithResultAsync<T, U>(string resource, T content)
         {
-            using (var response = await this.InvokeResourceAsync((arg, obj) => HttpClient.PutAsJsonAsync(arg, obj), resource, content))
+            using (var response = await InvokeResourceAsync((arg, obj) => HttpClient.PutAsJsonAsync(arg, obj), resource, content))
             {
-                var result = await this.DeserializeAsync<U>(response);
+                var result = await GetContentAsync(response);
                 return new RestResponse<U>(response, result);
             }
         }
 
         public async Task<RestResponse> DeleteAsync(string resource)
         {
-            using (var response = await this.InvokeResourceAsync<object>((arg, obj) => HttpClient.DeleteAsync(arg), resource, null))
+            using (var response = await InvokeResourceAsync<object>((arg, obj) => HttpClient.DeleteAsync(arg), resource, null))
             {
-                return new RestResponse(response);
+                var result = await GetContentAsync(response);
+                return new RestResponse(response, result);
             }
         }
 
@@ -180,32 +183,26 @@ namespace RestLibrary
 
             if (response.StatusCode == HttpStatusCode.Unauthorized && Credentials != null)
             {
-                await this.OAuthLoginAsync(Credentials.UserName, Credentials.Password);
+                await OAuthLoginAsync(Credentials.UserName, Credentials.Password);
                 response = await action.Invoke(resource, obj).ConfigureAwait(false);
             }
 
             return response;
         }
 
-        private async Task<T> DeserializeAsync<T>(HttpResponseMessage response)
+        private async Task<string> GetContentAsync(HttpResponseMessage response)
         {
-            T result = default(T);
+            string content = null;
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                if (typeof(T) == typeof(string))
-                {
-                    result = (T)Convert.ChangeType(content, typeof(string));
-                }
-                else
-                {
-                    result = JsonConvert.DeserializeObject<T>(content);
-                }
+                content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
+            catch
+            {
             }
 
-            return result;
+            return content;            
         }
 
         public async Task<bool> OAuthLoginAsync(string userName, string password, string path = "token")

@@ -14,10 +14,13 @@ namespace RestLibrary.Models
 
         public HttpStatusCode StatusCode { get; }
 
-        internal RestResponse(HttpResponseMessage response)
+        public string RawContent { get; }
+
+        internal RestResponse(HttpResponseMessage response, string content)
         {
             IsSuccessful = response.IsSuccessStatusCode;
             StatusCode = response.StatusCode;
+            RawContent = content;
         }
     }
 }
