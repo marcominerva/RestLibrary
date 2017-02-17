@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -16,11 +17,25 @@ namespace RestLibrary.Models
 
         public string RawContent { get; }
 
+        public ServiceError Error { get; }
+
         internal RestResponse(HttpResponseMessage response, string content)
         {
             IsSuccessful = response.IsSuccessStatusCode;
             StatusCode = response.StatusCode;
             RawContent = content;
+
+            if (!response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(content))
+            {
+                // If the response was unsuccessful, tries to deserialize error information.
+                try
+                {
+                    Error = JsonConvert.DeserializeObject<ServiceError>(content);
+                }
+                catch
+                {
+                }
+            }
         }
     }
 }

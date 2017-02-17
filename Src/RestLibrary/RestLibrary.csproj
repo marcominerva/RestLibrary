@@ -49,6 +49,7 @@
     <Compile Include="Models\Credentials.cs" />
     <Compile Include="Models\RestResponse.cs" />
     <Compile Include="Models\RestResponse{Of T}.cs" />
+    <Compile Include="Models\ServiceError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestClient.cs" />
   </ItemGroup>

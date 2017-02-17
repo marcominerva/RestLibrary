@@ -60,6 +60,9 @@
     <Compile Include="..\RestLibrary\Models\RestResponse{Of T}.cs">
       <Link>Models\RestResponse{Of T}.cs</Link>
     </Compile>
+    <Compile Include="..\RestLibrary\Models\ServiceError.cs">
+      <Link>Models\ServiceError.cs</Link>
+    </Compile>
     <Compile Include="..\RestLibrary\RestClient.cs">
       <Link>RestClient.cs</Link>
     </Compile>
