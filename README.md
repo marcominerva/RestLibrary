@@ -42,4 +42,4 @@ Other samples are available in the [Samples](https://github.com/marcominerva/Res
 
 **Contribute**
 
-The project is continually evolving. We welcome contributions. Feel free to file issues and pull requests on the repo and we'll address them as we can.
+The project is continuously evolving. We welcome contributions. Feel free to file issues and pull requests on the repo and we'll address them as we can.
