@@ -21,15 +21,42 @@ namespace RestLibrary
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
         public RestClient()
-            : this(null, null)
+            : this(null, null, null)
         {
         }
 
-        public RestClient(string baseAddress, string language = null)
+        public RestClient(string baseAddress)
+            : this(baseAddress, null, null)
         {
-            var handler = new HttpClientHandler { AllowAutoRedirect = true };
-            if (handler.SupportsAutomaticDecompression)
-                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+        }
+
+        public RestClient(HttpMessageHandler handler)
+            : this(null, null, handler)
+        {
+        }
+
+        public RestClient(string baseAddress, HttpMessageHandler handler)
+            : this(baseAddress, null, handler)
+        {
+        }
+
+        public RestClient(string baseAddress, string language)
+            : this(baseAddress, language, null)
+        {
+        }
+
+        public RestClient(string baseAddress, string language, HttpMessageHandler handler)
+        {
+            if (handler == null)
+            {
+                var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = true };
+                if (httpClientHandler.SupportsAutomaticDecompression)
+                {
+                    httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                }
+
+                handler = httpClientHandler;
+            }
 
             HttpClient = new HttpClient(handler);
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(JsonMimeType));
@@ -80,7 +107,9 @@ namespace RestLibrary
                     HttpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
 
                     if (language != null)
+                    {
                         HttpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(language));
+                    }
                 }
             }
         }
@@ -101,6 +130,8 @@ namespace RestLibrary
                 }
             }
         }
+
+        public bool AutoRenewToken { get; set; } = true;
 
         public Credentials Credentials { get; set; }
 
@@ -181,9 +212,9 @@ namespace RestLibrary
             resource = resource?.TrimStart('/');
             var response = await action(resource, obj).ConfigureAwait(false);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized && Credentials != null)
+            if (response.StatusCode == HttpStatusCode.Unauthorized && AutoRenewToken && Credentials != null)
             {
-                await OAuthLoginAsync(Credentials.UserName, Credentials.Password);
+                await OAuthLoginAsync(Credentials.UserName, Credentials.Password).ConfigureAwait(false);
                 response = await action.Invoke(resource, obj).ConfigureAwait(false);
             }
 
@@ -202,7 +233,7 @@ namespace RestLibrary
             {
             }
 
-            return content;            
+            return content;
         }
 
         public async Task<bool> OAuthLoginAsync(string userName, string password, string path = "token")

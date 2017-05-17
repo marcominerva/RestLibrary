@@ -23,10 +23,10 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            var client = new RestClient("http://localhost:27243/");            
+            var client = new RestClient("http://localhost:27243/");
 
             Console.WriteLine("Trying to logging in...");
-            var isLoggedIn = client.OAuthLoginAsync("demo@demo.com", "password").Result;            
+            var isLoggedIn = client.OAuthLoginAsync("demo@demo.com", "password").Result;
 
             if (isLoggedIn)
             {

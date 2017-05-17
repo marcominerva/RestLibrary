@@ -15,6 +15,8 @@ namespace RestLibrary
 
         string AccessToken { get; set; }
 
+        bool AutoRenewToken { get; set; }
+
         Credentials Credentials { get; set; }
 
         HttpRequestHeaders Headers { get; }
