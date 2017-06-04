@@ -21,41 +21,16 @@ namespace RestLibrary
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
         public RestClient()
-            : this(null, null, null)
+            : this(null, null)
         {
         }
 
-        public RestClient(string baseAddress)
-            : this(baseAddress, null, null)
+        public RestClient(string baseAddress, string language = null)
         {
-        }
-
-        public RestClient(HttpMessageHandler handler)
-            : this(null, null, handler)
-        {
-        }
-
-        public RestClient(string baseAddress, HttpMessageHandler handler)
-            : this(baseAddress, null, handler)
-        {
-        }
-
-        public RestClient(string baseAddress, string language)
-            : this(baseAddress, language, null)
-        {
-        }
-
-        public RestClient(string baseAddress, string language, HttpMessageHandler handler)
-        {
-            if (handler == null)
+            var handler = new HttpClientHandler { AllowAutoRedirect = true };
+            if (handler.SupportsAutomaticDecompression)
             {
-                var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = true };
-                if (httpClientHandler.SupportsAutomaticDecompression)
-                {
-                    httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                }
-
-                handler = httpClientHandler;
+                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             }
 
             HttpClient = new HttpClient(handler);
@@ -81,7 +56,9 @@ namespace RestLibrary
                     if (baseAddress != null)
                     {
                         if (!baseAddress.EndsWith("/"))
+                        {
                             baseAddress += "/";
+                        }
 
                         HttpClient.BaseAddress = new Uri(baseAddress);
                     }
