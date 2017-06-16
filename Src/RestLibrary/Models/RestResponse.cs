@@ -19,10 +19,13 @@ namespace RestLibrary.Models
 
         public ServiceError Error { get; }
 
+        public string ReasonPhrase { get; }
+
         internal RestResponse(HttpResponseMessage response, string content)
         {
             IsSuccessful = response.IsSuccessStatusCode;
             StatusCode = response.StatusCode;
+            ReasonPhrase = response.ReasonPhrase;
             RawContent = content;
 
             if (!response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(content))
@@ -35,6 +38,14 @@ namespace RestLibrary.Models
                 catch
                 {
                 }
+            }
+        }
+
+        public void EnsureSuccessStatusCode()
+        {
+            if (!IsSuccessful)
+            {
+                throw new HttpRequestException(ReasonPhrase);
             }
         }
     }
