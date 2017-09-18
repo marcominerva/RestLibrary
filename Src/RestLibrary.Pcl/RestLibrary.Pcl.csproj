@@ -42,6 +42,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RestLibrary\Converters\ModelStateConverter.cs">
+      <Link>Converters\ModelStateConverter.cs</Link>
+    </Compile>
     <Compile Include="..\RestLibrary\Extensions\HttpClientExtensions.cs">
       <Link>Extensions\HttpClientExtensions.cs</Link>
     </Compile>

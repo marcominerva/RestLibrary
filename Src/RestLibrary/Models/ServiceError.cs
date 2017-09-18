@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RestLibrary.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +17,8 @@ namespace RestLibrary.Models
         public string ExceptionType { get; set; }
 
         public string StackTrace { get; set; }
+
+        [JsonConverter(typeof(ModelStateConverter))]
+        public IEnumerable<string> ModelState { get; set; }
     }
 }

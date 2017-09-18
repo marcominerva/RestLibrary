@@ -47,6 +47,7 @@
     <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="IRestClient.cs" />
     <Compile Include="Models\Credentials.cs" />
+    <Compile Include="Converters\ModelStateConverter.cs" />
     <Compile Include="Models\RestResponse.cs" />
     <Compile Include="Models\RestResponse{Of T}.cs" />
     <Compile Include="Models\ServiceError.cs" />
