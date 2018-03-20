@@ -20,12 +20,15 @@ namespace RestLibrary
         internal const string JsonMimeType = "application/json";
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
 
-        public RestClient()
-            : this(null, null)
+        public RestClient() : this(null, null)
         {
         }
 
-        public RestClient(string baseAddress, string language = null)
+        public RestClient(string baseAddress) : this(baseAddress, null)
+        {
+        }
+
+        public RestClient(string baseAddress, string language)
         {
             var handler = new HttpClientHandler { AllowAutoRedirect = true };
             if (handler.SupportsAutomaticDecompression)
