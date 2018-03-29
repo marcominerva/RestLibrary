@@ -11,7 +11,7 @@ namespace RestLibrary.Models
 {
     public class RestResponse<T> : RestResponse
     {
-        public T Content { get; } = default(T);
+        public T Content { get; } = default;
 
         internal RestResponse(HttpResponseMessage response, string content)
             : base(response, content)

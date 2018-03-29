@@ -1,4 +1,5 @@
-﻿using RestLibrary;
+﻿using Newtonsoft.Json;
+using RestLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +22,17 @@ namespace ConsoleApp
 
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var client = new RestClient("http://localhost:27243/");
 
             Console.WriteLine("Trying to logging in...");
-            var isLoggedIn = client.OAuthLoginAsync("demo@demo.com", "password").Result;
+            var isLoggedIn = await client.OAuthLoginAsync("demo@demo.com", "password");
 
             if (isLoggedIn)
             {
                 Console.WriteLine("\r\nTrying to get product list...");
-                var productListResponse = client.GetAsync<IEnumerable<Product>>("api/products").Result;
+                var productListResponse = await client.GetAsync<IEnumerable<Product>>("api/products");
 
                 if (productListResponse.IsSuccessful)
                 {
@@ -42,7 +43,7 @@ namespace ConsoleApp
                 }
 
                 Console.WriteLine("Trying to get product with ID = 96 (that doesn't exist)...");
-                var productResponse = client.GetAsync<Product>("api/products/96").Result;
+                var productResponse = await client.GetAsync<Product>("api/products/96");
                 if (productResponse.IsSuccessful)
                 {
                     PrintProductInformation(productResponse.Content);
@@ -54,7 +55,7 @@ namespace ConsoleApp
 
                 Console.WriteLine("Adding a new product...");
                 var newProduct = new Product { Name = "Mouse Bluetooth", Price = 25 };
-                var newProductResponse = client.PostWithResultAsync<Product, Product>("api/products", newProduct).Result;
+                var newProductResponse = await client.PostWithResultAsync<Product, Product>("api/products", newProduct);
 
                 Console.WriteLine($"The ID of the new product is {newProductResponse.Content.Id}");
             }

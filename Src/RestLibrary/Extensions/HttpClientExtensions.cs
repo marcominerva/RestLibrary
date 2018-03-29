@@ -28,9 +28,8 @@ namespace RestLibrary.Extensions
 
         private static StringContent GetStringContent<T>(T obj)
         {
-            var postData = obj.ToJson();
-
-            var content = new StringContent(postData, Encoding.UTF8, RestClient.JsonMimeType);
+            var stringData = typeof(T) == typeof(string) ? obj?.ToString() : obj.ToJson();
+            var content = new StringContent(stringData, Encoding.UTF8, RestClient.JsonMimeType);
             return content;
         }
     }

@@ -19,6 +19,7 @@ namespace RestLibrary
     {
         internal const string JsonMimeType = "application/json";
         internal const string FormUrlEncoded = "application/x-www-form-urlencoded";
+        internal const string Bearer = "Bearer";
 
         public RestClient() : this(null, null)
         {
@@ -106,7 +107,7 @@ namespace RestLibrary
                 if (accessToken != value)
                 {
                     accessToken = value;
-                    HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Bearer, accessToken);
                 }
             }
         }
