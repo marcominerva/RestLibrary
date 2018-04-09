@@ -12,10 +12,13 @@ namespace RestLibrary.Models
 
         public string Password { get; }
 
-        public Credentials(string userName, string password)
+        public string Path { get; }
+
+        public Credentials(string userName, string password, string path = "token")
         {
             UserName = userName;
             Password = password;
+            Path = path;
         }
     }
 }

@@ -1,5 +1,6 @@
 using RestLibrary.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -47,7 +48,9 @@ namespace RestLibrary
 
         Task<RestResponse> DeleteAsync(string resource);
 
-        Task<bool> OAuthLoginAsync(string userName, string password, string path = "token");
+        Task<AuthenticationResult> OAuthLoginAsync(string userName, string password, IEnumerable<KeyValuePair<string, string>> additionalParameters, string path = "token");
+
+        Task<AuthenticationResult> OAuthLoginAsync(string userName, string password, string additionalParameters = null, string path = "token");
 
         Task LogoutAsync();
     }

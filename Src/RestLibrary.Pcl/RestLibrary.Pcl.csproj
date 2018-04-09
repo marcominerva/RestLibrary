@@ -56,6 +56,12 @@
     <Compile Include="..\RestLibrary\IRestClient.cs">
       <Link>IRestClient.cs</Link>
     </Compile>
+    <Compile Include="..\RestLibrary\Models\AuthenticationError.cs">
+      <Link>Models\AuthenticationError.cs</Link>
+    </Compile>
+    <Compile Include="..\RestLibrary\Models\AuthenticationResult.cs">
+      <Link>Models\AuthenticationResult.cs</Link>
+    </Compile>
     <Compile Include="..\RestLibrary\Models\Credentials.cs">
       <Link>Models\Credentials.cs</Link>
     </Compile>

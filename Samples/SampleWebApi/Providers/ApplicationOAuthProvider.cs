@@ -30,8 +30,7 @@ namespace SampleWebApi.Providers
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+            var user = await userManager.FindAsync(context.UserName, context.Password);
 
             if (user == null)
             {
@@ -57,7 +56,7 @@ namespace SampleWebApi.Providers
                 context.AdditionalResponseParameters.Add(property.Key, property.Value);
             }
 
-            return Task.FromResult<object>(null);
+            return Task.CompletedTask;
         }
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
@@ -68,7 +67,7 @@ namespace SampleWebApi.Providers
                 context.Validated();
             }
 
-            return Task.FromResult<object>(null);
+            return Task.CompletedTask;
         }
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
@@ -83,7 +82,7 @@ namespace SampleWebApi.Providers
                 }
             }
 
-            return Task.FromResult<object>(null);
+            return Task.CompletedTask;
         }
 
         public static AuthenticationProperties CreateProperties(string userName)

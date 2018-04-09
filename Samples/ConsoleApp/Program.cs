@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RestLibrary;
+using RestLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +28,9 @@ namespace ConsoleApp
             var client = new RestClient("http://localhost:27243/");
 
             Console.WriteLine("Trying to logging in...");
-            var isLoggedIn = await client.OAuthLoginAsync("demo@demo.com", "password");
 
-            if (isLoggedIn)
+            var authenticationResult = await client.OAuthLoginAsync("demo@demo.com", "password");
+            if (authenticationResult.Succeeded)
             {
                 Console.WriteLine("\r\nTrying to get product list...");
                 var productListResponse = await client.GetAsync<IEnumerable<Product>>("api/products");
@@ -61,7 +62,7 @@ namespace ConsoleApp
             }
             else
             {
-                Console.WriteLine("Invalid Username or password.");
+                Console.WriteLine($"{authenticationResult.Error.Message}: {authenticationResult.Error.Description}");
             }
 
             Console.ReadLine();

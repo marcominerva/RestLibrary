@@ -195,7 +195,7 @@ namespace RestLibrary
 
             if (response.StatusCode == HttpStatusCode.Unauthorized && AutoRenewToken && Credentials != null)
             {
-                await OAuthLoginAsync(Credentials.UserName, Credentials.Password).ConfigureAwait(false);
+                await OAuthLoginAsync(Credentials.UserName, Credentials.Password, Credentials.Path).ConfigureAwait(false);
                 response = await action.Invoke(resource, obj).ConfigureAwait(false);
             }
 
@@ -217,25 +217,44 @@ namespace RestLibrary
             return content;
         }
 
-        public async Task<bool> OAuthLoginAsync(string userName, string password, string path = "token")
+        public Task<AuthenticationResult> OAuthLoginAsync(string userName, string password, IEnumerable<KeyValuePair<string, string>> additionalParameters, string path = "token")
         {
-            var body = $"grant_type=password&username={userName}&password={password}";
+            string parameters = null;
+            if (additionalParameters != null)
+            {
+                parameters = string.Join("&", additionalParameters.Select(p => $"{p.Key}={p.Value}"));
+            }
+
+            return OAuthLoginAsync(userName, password, parameters, path);
+        }
+
+        public async Task<AuthenticationResult> OAuthLoginAsync(string userName, string password, string additionalParameters = null, string path = "token")
+        {
+            var result = new AuthenticationResult();
+
+            var body = $"grant_type=password&username={userName}&password={password}&{additionalParameters}";
             var data = new StringContent(body, Encoding.UTF8, FormUrlEncoded);
             var response = await HttpClient.PostAsync(path, data).ConfigureAwait(false);
+
+            var contentString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var content = JToken.Parse(contentString);
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 // Invalid username or password.
-                return false;
+                result.Succeeded = false;
+                result.Error = new AuthenticationError(content["error"]?.ToString(), content["error_description"]?.ToString());
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+
+                result.Succeeded = true;
+                AccessToken = content["access_token"].ToString();
+                Credentials = new Credentials(userName, password, path);
             }
 
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            AccessToken = JToken.Parse(content)["access_token"].ToString();
-            Credentials = new Credentials(userName, password);
-
-            return true;
+            return result;
         }
 
         public Task LogoutAsync()

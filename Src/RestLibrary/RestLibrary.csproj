@@ -48,6 +48,8 @@
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="IRestClient.cs" />
+    <Compile Include="Models\AuthenticationError.cs" />
+    <Compile Include="Models\AuthenticationResult.cs" />
     <Compile Include="Models\Credentials.cs" />
     <Compile Include="Converters\ModelStateConverter.cs" />
     <Compile Include="Models\RestResponse.cs" />
